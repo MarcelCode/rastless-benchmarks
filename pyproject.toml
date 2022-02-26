@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "rastless-benchmarks"
+version = "0.1.0"
+description = ""
+authors = ["Marcel <siegmann@eomap.de>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+locust = "^2.8.2"
+morecantile = "^3.1.1"
+python-dotenv = "^0.19.2"
+mercantile = "^1.2.1"
+supermercado = "^0.2.0"
+fio = "^0.0.6"
+pytest = "^7.0.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
