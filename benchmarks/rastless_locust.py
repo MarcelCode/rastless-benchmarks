@@ -1,17 +1,15 @@
 import os
 from locust import HttpUser, task, stats
-from dotenv import load_dotenv
+
 
 from benchmarks.settings import Settings, RastLessSettings
 from benchmarks.utils.tools import RandomDate, RandomTile
-
-load_dotenv()
 
 
 class RastLessVisualization(HttpUser):
     host = RastLessSettings.host
     layer_id = RastLessSettings.rastless_layer_id
-    access_token = os.getenv("RASTLESS_ACCESS_TOKEN")
+    access_token = RastLessSettings.access_token
     random_tile = RandomTile(Settings.bounding_box, Settings.min_zoom, Settings.max_zoom)
     random_dates = RandomDate(Settings.dates)
 

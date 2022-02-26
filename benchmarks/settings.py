@@ -1,7 +1,11 @@
 from dataclasses import dataclass
 from pathlib import Path
+from dotenv import load_dotenv
+import os
 
 from benchmarks.utils.geo import BoundingBox
+
+load_dotenv()
 
 
 @dataclass
@@ -41,5 +45,18 @@ class Settings:
 
 @dataclass
 class RastLessSettings:
-    host = "https://rastless.dev.eomap.com/"
+    host = "https://rastless.dev.eomap.com"
     rastless_layer_id = "38ee856d-6888-4af1-98a1-dc8906f240e4"
+    access_token = os.getenv("RASTLESS_ACCESS_TOKEN")
+
+
+@dataclass
+class RasdamanSettings:
+    host = "https://api-layer.eomap.com"
+    username = os.getenv("RASDAMAN_USERNAME")
+    password = os.getenv("RASDAMAN_PASSWORD")
+
+
+@dataclass
+class DirectRasdamanSettings(RasdamanSettings):
+    host = "https://api-layer.eomap.com"
