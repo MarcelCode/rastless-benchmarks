@@ -13,6 +13,7 @@ mercantile = "^1.2.1"
 supermercado = "^0.2.0"
 fio = "^0.0.6"
 pytest = "^7.0.1"
+python-keycloak = "^0.27.0"
 
 [tool.poetry.dev-dependencies]
 

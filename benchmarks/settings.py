@@ -55,8 +55,12 @@ class RasdamanSettings:
     host = "https://api-layer.eomap.com"
     username = os.getenv("RASDAMAN_USERNAME")
     password = os.getenv("RASDAMAN_PASSWORD")
+    keycloak_client_id = os.getenv("RASDAMAN_CLIENT_ID")
+    keycloak_client_secret = os.getenv("RASDAMAN_CLIENT_SECRET")
+    keycloak_url = "https://auth.eomap.com/auth/"
+    keycloak_realm_name = "eomap"
 
 
 @dataclass
-class DirectRasdamanSettings(RasdamanSettings):
-    host = "https://api-layer.eomap.com"
+class RasdamanLocalSettings(RasdamanSettings):
+    host = os.getenv("RASDAMAN_LOCAL_HOST")
