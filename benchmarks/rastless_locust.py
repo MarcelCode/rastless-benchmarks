@@ -19,6 +19,7 @@ class RastLessVisualization(HttpUser):
     def get_tile(self):
         tile = self.random_tile.get_tile()
         datetime = self.random_dates.get_date()
+        datetime = datetime.replace("T", " ")  # This dataset is not stored as isodate
         self.client.get(
             f"/layers/{self.layer_id}/{datetime}/tile/{tile.z}/{tile.x}/{tile.y}.png?token={self.access_token}",
             name="tile"

@@ -1,4 +1,4 @@
-import os.path
+import os
 from typing import List
 import gevent
 from locust.env import Environment
@@ -6,6 +6,7 @@ from locust import stats
 from locust.stats import stats_printer, stats_history, StatsCSVFileWriter, PERCENTILES_TO_REPORT
 from locust.log import setup_logging
 from datetime import datetime
+from benchmarks.settings import Settings
 
 from benchmarks.rastless_locust import RastLessVisualization
 
@@ -34,4 +35,4 @@ def start_locust_runner(user_classes: List, user_count: int, spawn_rate: float, 
 
 if __name__ == '__main__':
     start_locust_runner([RastLessVisualization], user_count=10, spawn_rate=1, stop_after_seconds=11,
-                        csv_path="../benchmark_results/rastless/visualization")
+                        csv_path=os.path.join(Settings.base_dir, "benchmark_results/rastless/visualization"))
