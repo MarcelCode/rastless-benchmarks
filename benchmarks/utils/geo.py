@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from pyproj import Transformer
+import mercantile
 
 
 @dataclass
@@ -17,3 +18,11 @@ class BoundingBox:
         return BoundingBox(x_west_proj, y_north_proj, x_east_proj, y_south_proj, epsg=epsg_out)
 
 
+@dataclass
+class Tile:
+    z: int
+    x: int
+    y: int
+
+    def xy_bounds(self):
+        return mercantile.xy_bounds(self.x, self.y, self.z)
