@@ -19,13 +19,11 @@ class RasdamanProxyVisualization(HttpUser):
         tile = self.random_tile.get_tile()
         datetime = self.random_dates.get_date()
 
-        self.client.get(
-            f"/raster/hypos/wms/?&service=WMS&request=GetMap&layers={self.layer_id}&format=image%2Fpng&"
-            f"transparent=true&version=1.3.0&width=256&height=256&time=%22{datetime}%22&crs=EPSG%3A3857&"
-            f"bbox={tile.str_xy_bounds}&styles=log50_C1S3_32bit",
-            headers={"Authorization": self.bearer_token},
-            name="tile"
-        )
+        url = f"/raster/hypos/wms/?&service=WMS&request=GetMap&layers={self.layer_id}&format=image%2Fpng&" \
+              f"transparent=true&version=1.3.0&width=256&height=256&time=%22{datetime}%22&crs=EPSG%3A3857&" \
+              f"bbox={tile.str_xy_bounds}&styles=log50_C1S3_32bit"
+
+        self.client.get(url, headers={"Authorization": self.bearer_token}, name="tile")
 
 
 class RasdamanLocalVisualization(HttpUser):
@@ -39,9 +37,8 @@ class RasdamanLocalVisualization(HttpUser):
         tile = self.random_tile.get_tile()
         datetime = self.random_dates.get_date()
 
-        self.client.get(
-            f"/rasdaman/ows?service=WMS&request=GetMap&layers={self.layer_id}&format=image%2Fpng&transparent=true&"
-            f"version=1.3.0&width=256&height=256&time=%22{datetime}%22&crs=EPSG%3A3857&bbox={tile.str_xy_bounds}&"
-            f"styles=log50_C1S3_32bit",
-            name="tile"
-        )
+        url = f"/rasdaman/ows?service=WMS&request=GetMap&layers={self.layer_id}&format=image%2Fpng&transparent=true&" \
+              f"version=1.3.0&width=256&height=256&time=%22{datetime}%22&crs=EPSG%3A3857&bbox={tile.str_xy_bounds}&" \
+              f"styles=log50_C1S3_32bit"
+
+        self.client.get(url, name="tile")

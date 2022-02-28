@@ -35,13 +35,20 @@ def start_locust_runner(user_classes: List, user_count: int, spawn_rate: float, 
 
 
 if __name__ == '__main__':
-    start_locust_runner([RastLessVisualization], user_count=20, spawn_rate=1, stop_after_seconds=30,
-                        csv_path=os.path.join(Settings.base_dir, "benchmark_results/rastless/visualization"))
+    USER_COUNT = 25
+    SPAWN_RATE = 1
+    STOP_AFTER_SECONDS = 35
 
-    # start_locust_runner([RasdamanVisualization], user_count=20, spawn_rate=1, stop_after_seconds=30,
-    #                     csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman/visualization"))
+    # start_locust_runner([RastLessVisualization], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
+    #                     stop_after_seconds=STOP_AFTER_SECONDS,
+    #                     csv_path=os.path.join(Settings.base_dir, "benchmark_results/rastless/visualization"))
+    #
+    start_locust_runner([RasdamanProxyVisualization], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
+                        stop_after_seconds=STOP_AFTER_SECONDS,
+                        csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman/visualization"))
 
-    # start_locust_runner([RasdamanLocalVisualization], user_count=20, spawn_rate=1, stop_after_seconds=30,
+    # start_locust_runner([RasdamanLocalVisualization], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
+    #                     stop_after_seconds=STOP_AFTER_SECONDS,
     #                     csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman_local/visualization"))
 
     # env = Environment(user_classes=[RastLessVisualization])
