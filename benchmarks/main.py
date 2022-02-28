@@ -9,7 +9,7 @@ from datetime import datetime
 from benchmarks.settings import Settings
 
 from benchmarks.rastless_locust import RastLessVisualization
-from benchmarks.rasdaman_locust import RasdamanVisualization, RasdamanLocalVisualization
+from benchmarks.rasdaman_locust import RasdamanProxyVisualization, RasdamanLocalVisualization
 
 setup_logging("INFO", None)
 stats.CSV_STATS_FLUSH_INTERVAL_SEC = 5

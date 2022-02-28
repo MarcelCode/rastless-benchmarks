@@ -24,5 +24,11 @@ class Tile:
     x: int
     y: int
 
+    @property
     def xy_bounds(self):
         return mercantile.xy_bounds(self.x, self.y, self.z)
+
+    @property
+    def str_xy_bounds(self):
+        bounds = self.xy_bounds
+        return ",".join([str(bounds.left), str(bounds.bottom), str(bounds.right), str(bounds.top)])

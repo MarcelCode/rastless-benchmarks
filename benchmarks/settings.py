@@ -59,7 +59,7 @@ class Settings:
 @dataclass
 class RastLessSettings:
     host = "https://rastless.dev.eomap.com"
-    rastless_layer_id = "38ee856d-6888-4af1-98a1-dc8906f240e4"
+    layer_id = "38ee856d-6888-4af1-98a1-dc8906f240e4"
     access_token = os.getenv("RASTLESS_ACCESS_TOKEN")
 
 
@@ -72,8 +72,9 @@ class RasdamanSettings:
     keycloak_client_secret = os.getenv("RASDAMAN_CLIENT_SECRET")
     keycloak_url = "https://auth.eomap.com/auth/"
     keycloak_realm_name = "eomap"
+    layer_id = "TUR_alb_banja_hypos_public_32bit"
 
 
 @dataclass
 class RasdamanLocalSettings(RasdamanSettings):
-    host = os.getenv("RASDAMAN_LOCAL_HOST")
+    host = "http://127.0.0.1:5255"

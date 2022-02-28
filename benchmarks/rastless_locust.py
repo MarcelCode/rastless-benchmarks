@@ -1,5 +1,5 @@
 import os
-from locust import HttpUser, task, stats
+from locust import HttpUser, task
 
 
 from benchmarks.settings import Settings, RastLessSettings
@@ -8,7 +8,7 @@ from benchmarks.utils.tools import RandomDate, RandomTile
 
 class RastLessVisualization(HttpUser):
     host = RastLessSettings.host
-    layer_id = RastLessSettings.rastless_layer_id
+    layer_id = RastLessSettings.layer_id
     access_token = RastLessSettings.access_token
     random_tile = RandomTile(Settings.tiles)
     random_dates = RandomDate(Settings.dates)
