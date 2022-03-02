@@ -1,4 +1,5 @@
 from locust import HttpUser, task
+from urllib.parse import quote
 
 from benchmarks.settings import RasdamanSettings, RasdamanLocalSettings, Settings
 from benchmarks.utils.auth import get_keycloak_bearer_token
@@ -76,3 +77,43 @@ class RasdamanProxyPolygonAnalysis(HttpUser):
 
         url = f"/raster/hypos/wcps/polygon/?layers={self.layer_id}"
         self.client.post(url, headers={"Authorization": self.bearer_token}, json=body, name="timeseries_polygon")
+
+
+class RasdamanLocalPointAnalysis(HttpUser):
+    layer_id = RasdamanLocalSettings.layer_id
+    host = RasdamanLocalSettings.host
+    random_geometry = random_geometry_gen
+    start_date = "2016-01-08T09:46:11"
+    end_date = "2021-12-05T09:23:14"
+
+    @task
+    def get_timeseries(self):
+        point = self.random_geometry.get_point()
+        point_web_mercator = point.transform()
+
+        query = f'for $c in ( {self.layer_id} ) return encode($c[ansi("{self.start_date}":"{self.end_date}"),' \
+                f' X({point_web_mercator.x}), Y({point_web_mercator.y})],"json")'
+        url = f'/rasdaman/ows?VERSION=2.0.1&SERVICE=WCPS&QUERY={quote(query)}'
+
+        self.client.get(url, name="timeseries_point")
+
+
+class RasdamanLocalPolygonAnalysis(HttpUser):
+    layer_id = RasdamanLocalSettings.layer_id
+    host = RasdamanLocalSettings.host
+    random_geometry = random_geometry_gen
+    start_date = "2016-01-08T09:46:11"
+    end_date = "2021-12-05T09:23:14"
+
+    @task
+    def get_timeseries(self):
+        polygon_formatted, x_bounds, y_bounds = self.random_geometry.get_polygon_rasdaman()
+
+        query = f'for $c in ( {self.layer_id} ) return encode( coverage myTimeSeries over $date' \
+                f' ansi(imageCrsDomain($c[ansi("{self.start_date}":"{self.end_date}")], ansi)) values' \
+                f' avg( clip( $c[ansi($date), X({x_bounds}), Y({y_bounds})],' \
+                f' {polygon_formatted} )), "json")'
+
+        url = f'/rasdaman/ows?VERSION=2.0.1&SERVICE=WCPS&QUERY={quote(query)}'
+
+        self.client.get(url, name="timeseries_polygon")

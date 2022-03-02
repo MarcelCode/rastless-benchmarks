@@ -87,6 +87,27 @@ class RandomGeometryGeojson:
             "coordinates": [coordinates]
         }
 
+    def get_polygon_rasdaman(self, size_degree: float = 0.003, epsg: int = 3857):
+        point = self.get_point()
+        coordinates = []
+
+        for calc in [[-size_degree, -size_degree], [-size_degree, size_degree], [size_degree, size_degree],
+                     [size_degree, -size_degree], [-size_degree, -size_degree]]:
+            point_web_mercator = GeomPoint(point.x + calc[0], point.y + calc[1]).transform(epsg_out=epsg)
+            coordinates.append(point_web_mercator)
+
+        min_x = int(min([pnt.x for pnt in coordinates]))
+        max_x = int(max([pnt.x for pnt in coordinates]))
+        min_y = int(min([pnt.y for pnt in coordinates]))
+        max_y = int(max([pnt.y for pnt in coordinates]))
+
+        coordinates_formatted = ", ".join([f"{int(pnt.x)} {int(pnt.y)}" for pnt in coordinates])
+        polygon_formatted = f"POLYGON (({coordinates_formatted}))"
+        x_bounds = f"{min_x}:{max_x}"
+        y_bounds = f"{min_y}:{max_y}"
+
+        return polygon_formatted, x_bounds, y_bounds
+
 
 def geojson_file_to_dict(geojson_file_path) -> dict:
     with open(geojson_file_path) as fobj:
@@ -100,5 +121,7 @@ if __name__ == '__main__':
 
     random_points = RandomGeometryGeojson(geojson)
     random_points.generate_points()
+
+    test = random_points.get_polygon_rasdaman()
 
     print("test")

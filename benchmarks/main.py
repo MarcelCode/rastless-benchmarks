@@ -55,6 +55,14 @@ if __name__ == '__main__':
     #                     stop_after_seconds=STOP_AFTER_SECONDS,
     #                     csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman/analysis_point"))
 
-    start_locust_runner([rasdaman_locust.RasdamanProxyPointAnalysis], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
+    # start_locust_runner([rasdaman_locust.RasdamanProxyPointAnalysis], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
+    #                     stop_after_seconds=STOP_AFTER_SECONDS,
+    #                     csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman/analysis_polygon"))
+
+    # start_locust_runner([rasdaman_locust.RasdamanLocalPointAnalysis], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
+    #                     stop_after_seconds=STOP_AFTER_SECONDS,
+    #                     csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman_local/analysis_point"))
+
+    start_locust_runner([rasdaman_locust.RasdamanLocalPolygonAnalysis], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
                         stop_after_seconds=STOP_AFTER_SECONDS,
-                        csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman/analysis_polygon"))
+                        csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman_local/analysis_polygon"))
