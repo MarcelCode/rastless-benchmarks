@@ -32,3 +32,15 @@ class Tile:
     def str_xy_bounds(self):
         bounds = self.xy_bounds
         return ",".join([str(bounds.left), str(bounds.bottom), str(bounds.right), str(bounds.top)])
+
+
+@dataclass
+class Point:
+    x: float
+    y: float
+    epsg: int = 4326
+
+    def transform(self, epsg_out: int = 3857):
+        t = Transformer.from_crs(f"epsg:{self.epsg}", f"epsg:{epsg_out}", always_xy=True)
+        x, y = t.transform(self.x, self.y)
+        return Point(x, y, epsg=epsg_out)

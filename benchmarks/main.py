@@ -8,7 +8,7 @@ from locust.log import setup_logging
 from datetime import datetime
 from benchmarks.settings import Settings
 
-from benchmarks.rastless_locust import RastLessVisualization
+from benchmarks.rastless_locust import RastLessVisualization, RastLessPointAnalysis
 from benchmarks.rasdaman_locust import RasdamanProxyVisualization, RasdamanLocalVisualization
 
 setup_logging("INFO", None)
@@ -43,14 +43,14 @@ if __name__ == '__main__':
     #                     stop_after_seconds=STOP_AFTER_SECONDS,
     #                     csv_path=os.path.join(Settings.base_dir, "benchmark_results/rastless/visualization"))
     #
-    start_locust_runner([RasdamanProxyVisualization], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
-                        stop_after_seconds=STOP_AFTER_SECONDS,
-                        csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman/visualization"))
+    # start_locust_runner([RasdamanProxyVisualization], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
+    #                     stop_after_seconds=STOP_AFTER_SECONDS,
+    #                     csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman/visualization"))
 
     # start_locust_runner([RasdamanLocalVisualization], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
     #                     stop_after_seconds=STOP_AFTER_SECONDS,
     #                     csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman_local/visualization"))
 
-    # env = Environment(user_classes=[RastLessVisualization])
-    # x = RastLessVisualization(environment=env)
-    # x.run()
+    env = Environment(user_classes=[RastLessPointAnalysis])
+    x = RastLessPointAnalysis(environment=env)
+    x.run()

@@ -54,6 +54,7 @@ class Settings:
     ]
     min_zoom: int = 10
     max_zoom: int = 15
+    aoi_geojson_file = "../data/banja_dam.geojson"
 
 
 @dataclass

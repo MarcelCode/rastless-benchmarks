@@ -1,6 +1,9 @@
+import pytest
 from mercantile import Tile
+import os
 
 from benchmarks.utils import tools
+from benchmarks.settings import Settings
 
 
 def test_get_random_tile():
@@ -41,3 +44,34 @@ def test_get_random_date():
     expected_new_dates = ['2020-01-01T11:00:00', '2020-01-01T11:00:00', '2022-01-01T11:00:00']
 
     assert new_dates == expected_new_dates
+
+
+@pytest.fixture
+def random_geometry():
+    geojson = tools.geojson_file_to_dict(os.path.join(Settings.base_dir, "data/banja_dam.geojson"))
+    rand_geometry = tools.RandomGeometryGeojson(geojson)
+    rand_geometry.generate_points(10)
+
+    return rand_geometry
+
+
+def test_get_random_point_geojson(random_geometry):
+    expected_geojson = {
+        "type": "Point",
+        "coordinates": [20.11335972970832, 40.929896080240404]
+    }
+
+    assert random_geometry.get_point_geojson() == expected_geojson
+
+
+def test_get_random_polygon_geojson(random_geometry):
+    expected_geojson = {
+        "type": "Polygon",
+        "coordinates": [[[20.11035972970832, 40.926896080240404],
+                         [20.11035972970832, 40.932896080240404],
+                         [20.11635972970832, 40.932896080240404],
+                         [20.11635972970832, 40.926896080240404],
+                         [20.11035972970832, 40.926896080240404]]]
+    }
+
+    assert random_geometry.get_polygon_geojson() == expected_geojson
