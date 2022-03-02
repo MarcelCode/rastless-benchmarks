@@ -1,8 +1,12 @@
 from locust import HttpUser, task
-import requests
 
 from benchmarks.settings import Settings, RastLessSettings
 from benchmarks.utils.tools import RandomDate, RandomTile, geojson_file_to_dict, RandomGeometryGeojson
+
+
+geojson = geojson_file_to_dict(Settings.aoi_geojson_file)
+random_geometry_gen = RandomGeometryGeojson(geojson)
+random_geometry_gen.generate_points()
 
 
 class RastLess(HttpUser):
@@ -24,18 +28,14 @@ class RastLessVisualization(RastLess):
         self.client.get(url, name="tile")
 
 
-geojson = geojson_file_to_dict(Settings.aoi_geojson_file)
-random_geometry_gen = RandomGeometryGeojson(geojson)
-random_geometry_gen.generate_points()
-
-
-class RastLessPointAnalysis(RastLess):
+class RastLessAnalysis(RastLess):
     random_geometry = random_geometry_gen
     statistic = "mean"
+    geometry_handler = None
 
     @task
     def get_timeseries_for_point(self):
-        geometry = self.random_geometry.get_point_geojson()
+        geometry = getattr(self.random_geometry, self.geometry_handler)()
 
         body = {
             "statistic": self.statistic,
@@ -45,3 +45,10 @@ class RastLessPointAnalysis(RastLess):
         url = f"/layers/{self.layer_id}/statistic?token={self.access_token}"
         self.client.post(url, json=body, name="timeseries")
 
+
+class RastLessPointAnalysis(RastLessAnalysis):
+    geometry_handler = "get_point_geojson"
+
+
+class RastLessPolygonAnalysis(RastLessAnalysis):
+    geometry_handler = "get_polygon_geojson"
