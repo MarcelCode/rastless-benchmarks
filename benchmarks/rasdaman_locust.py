@@ -45,3 +45,34 @@ class RasdamanLocalVisualization(Rasdaman):
     url = "/rasdaman/ows?service=WMS&request=GetMap&layers={layer_id}&format=image%2Fpng&transparent=true&" \
           "version=1.3.0&width=256&height=256&time=%22{datetime}%22&crs=EPSG%3A3857&bbox={bbox}&" \
           "styles=log50_C1S3_32bit"
+
+
+class RasdamanProxyPointAnalysis(HttpUser):
+    layer_id = RasdamanSettings.layer_id
+    host = RasdamanSettings.host
+    random_geometry = random_geometry_gen
+    bearer_token = BEARER_TOKEN
+
+    @task
+    def get_timeseries(self):
+        geometry = self.random_geometry.get_point()
+        url = f"/raster/hypos/wcps/point/{geometry.x}/{geometry.y}/?layers={self.layer_id}"
+        self.client.get(url, headers={"Authorization": self.bearer_token}, name="timeseries_point")
+
+
+class RasdamanProxyPolygonAnalysis(HttpUser):
+    layer_id = RasdamanSettings.layer_id
+    host = RasdamanSettings.host
+    random_geometry = random_geometry_gen
+    bearer_token = BEARER_TOKEN
+
+    @task
+    def get_timeseries(self):
+        geometry = self.random_geometry.get_polygon_geojson()
+
+        body = {
+            "feature": geometry
+        }
+
+        url = f"/raster/hypos/wcps/polygon/?layers={self.layer_id}"
+        self.client.post(url, headers={"Authorization": self.bearer_token}, json=body, name="timeseries_polygon")

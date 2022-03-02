@@ -34,7 +34,7 @@ class RastLessAnalysis(RastLess):
     geometry_handler = None
 
     @task
-    def get_timeseries_for_point(self):
+    def get_timeseries(self):
         geometry = getattr(self.random_geometry, self.geometry_handler)()
 
         body = {
