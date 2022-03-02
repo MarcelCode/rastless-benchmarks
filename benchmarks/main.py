@@ -43,14 +43,10 @@ if __name__ == '__main__':
     #                     stop_after_seconds=STOP_AFTER_SECONDS,
     #                     csv_path=os.path.join(Settings.base_dir, "benchmark_results/rastless/visualization"))
     #
-    # start_locust_runner([RasdamanProxyVisualization], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
-    #                     stop_after_seconds=STOP_AFTER_SECONDS,
-    #                     csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman/visualization"))
+    start_locust_runner([RasdamanProxyVisualization], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
+                        stop_after_seconds=STOP_AFTER_SECONDS,
+                        csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman/visualization"))
 
     # start_locust_runner([RasdamanLocalVisualization], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
     #                     stop_after_seconds=STOP_AFTER_SECONDS,
     #                     csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman_local/visualization"))
-
-    env = Environment(user_classes=[RastLessPointAnalysis])
-    x = RastLessPointAnalysis(environment=env)
-    x.run()
