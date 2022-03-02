@@ -1,5 +1,6 @@
 from locust import HttpUser, task
 from urllib.parse import quote
+import os
 
 from benchmarks.settings import RasdamanSettings, RasdamanLocalSettings, Settings
 from benchmarks.utils.auth import get_keycloak_bearer_token
@@ -7,7 +8,7 @@ from benchmarks.utils.tools import RandomDate, RandomTile, geojson_file_to_dict,
 
 BEARER_TOKEN = get_keycloak_bearer_token(RasdamanSettings)
 
-geojson = geojson_file_to_dict(Settings.aoi_geojson_file)
+geojson = geojson_file_to_dict(os.path.join(Settings.base_dir, Settings.aoi_geojson_file))
 random_geometry_gen = RandomGeometryGeojson(geojson)
 random_geometry_gen.generate_points()
 

@@ -1,10 +1,11 @@
 from locust import HttpUser, task
+import os
 
 from benchmarks.settings import Settings, RastLessSettings
 from benchmarks.utils.tools import RandomDate, RandomTile, geojson_file_to_dict, RandomGeometryGeojson
 
 
-geojson = geojson_file_to_dict(Settings.aoi_geojson_file)
+geojson = geojson_file_to_dict(os.path.join(Settings.base_dir, Settings.aoi_geojson_file))
 random_geometry_gen = RandomGeometryGeojson(geojson)
 random_geometry_gen.generate_points()
 
