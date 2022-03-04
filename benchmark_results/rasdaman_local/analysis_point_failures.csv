@@ -1,2 +1,0 @@
-Method,Name,Error,Occurrences
-GET,timeseries_point,500 Server Error:  for url: timeseries_point,1

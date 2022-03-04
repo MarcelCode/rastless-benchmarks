@@ -1,4 +1,4 @@
-from locust import HttpUser, task
+from locust import FastHttpUser, task
 from urllib.parse import quote
 import os
 
@@ -13,7 +13,7 @@ random_geometry_gen = RandomGeometryGeojson(geojson)
 random_geometry_gen.generate_points()
 
 
-class Rasdaman(HttpUser):
+class Rasdaman(FastHttpUser):
     random_tile = RandomTile(Settings.tiles)
     random_dates = RandomDate(Settings.dates)
 
@@ -21,6 +21,7 @@ class Rasdaman(HttpUser):
     layer_id = ""
     url = ""
     headers = {}
+    name = ""
 
     @task
     def get_tile(self):
@@ -29,7 +30,7 @@ class Rasdaman(HttpUser):
 
         request_url = self.url.format(layer_id=self.layer_id, datetime=datetime, bbox=tile.str_xy_bounds)
 
-        self.client.get(request_url, headers=self.headers, name="tile")
+        self.client.get(request_url, headers=self.headers, name=self.name)
 
 
 class RasdamanProxyVisualization(Rasdaman):
@@ -39,6 +40,7 @@ class RasdamanProxyVisualization(Rasdaman):
     url = "/raster/hypos/wms/?&service=WMS&request=GetMap&layers={layer_id}&format=image%2Fpng&" \
           "transparent=true&version=1.3.0&width=256&height=256&time=%22{datetime}%22&crs=EPSG%3A3857&" \
           "bbox={bbox}&styles=log50_C1S3_32bit"
+    name = "visualization"
 
 
 class RasdamanLocalVisualization(Rasdaman):
@@ -47,9 +49,10 @@ class RasdamanLocalVisualization(Rasdaman):
     url = "/rasdaman/ows?service=WMS&request=GetMap&layers={layer_id}&format=image%2Fpng&transparent=true&" \
           "version=1.3.0&width=256&height=256&time=%22{datetime}%22&crs=EPSG%3A3857&bbox={bbox}&" \
           "styles=log50_C1S3_32bit"
+    name = "visualization"
 
 
-class RasdamanProxyPointAnalysis(HttpUser):
+class RasdamanProxyPointAnalysis(FastHttpUser):
     layer_id = RasdamanSettings.layer_id
     host = RasdamanSettings.host
     random_geometry = random_geometry_gen
@@ -59,10 +62,11 @@ class RasdamanProxyPointAnalysis(HttpUser):
     def get_timeseries(self):
         geometry = self.random_geometry.get_point()
         url = f"/raster/hypos/wcps/point/{geometry.x}/{geometry.y}/?layers={self.layer_id}"
-        self.client.get(url, headers={"Authorization": self.bearer_token}, name="timeseries_point")
+        self.client.get(url, headers={"Authorization": self.bearer_token},
+                        name="timeseries-point")
 
 
-class RasdamanProxyPolygonAnalysis(HttpUser):
+class RasdamanProxyPolygonAnalysis(FastHttpUser):
     layer_id = RasdamanSettings.layer_id
     host = RasdamanSettings.host
     random_geometry = random_geometry_gen
@@ -77,15 +81,16 @@ class RasdamanProxyPolygonAnalysis(HttpUser):
         }
 
         url = f"/raster/hypos/wcps/polygon/?layers={self.layer_id}"
-        self.client.post(url, headers={"Authorization": self.bearer_token}, json=body, name="timeseries_polygon")
+        self.client.post(url, headers={"Authorization": self.bearer_token}, json=body,
+                         name="timeseries-polygon")
 
 
-class RasdamanLocalPointAnalysis(HttpUser):
+class RasdamanLocalPointAnalysis(FastHttpUser):
     layer_id = RasdamanLocalSettings.layer_id
     host = RasdamanLocalSettings.host
     random_geometry = random_geometry_gen
-    start_date = "2016-01-08T09:46:11"
-    end_date = "2021-12-05T09:23:14"
+    start_date = Settings.start_date
+    end_date = Settings().end_date
 
     @task
     def get_timeseries(self):
@@ -96,15 +101,15 @@ class RasdamanLocalPointAnalysis(HttpUser):
                 f' X({point_web_mercator.x}), Y({point_web_mercator.y})],"json")'
         url = f'/rasdaman/ows?VERSION=2.0.1&SERVICE=WCPS&QUERY={quote(query)}'
 
-        self.client.get(url, name="timeseries_point")
+        self.client.get(url, name="timeseries-point")
 
 
-class RasdamanLocalPolygonAnalysis(HttpUser):
+class RasdamanLocalPolygonAnalysis(FastHttpUser):
     layer_id = RasdamanLocalSettings.layer_id
     host = RasdamanLocalSettings.host
     random_geometry = random_geometry_gen
-    start_date = "2016-01-08T09:46:11"
-    end_date = "2021-12-05T09:23:14"
+    start_date = Settings.start_date
+    end_date = Settings().end_date
 
     @task
     def get_timeseries(self):
@@ -117,4 +122,4 @@ class RasdamanLocalPolygonAnalysis(HttpUser):
 
         url = f'/rasdaman/ows?VERSION=2.0.1&SERVICE=WCPS&QUERY={quote(query)}'
 
-        self.client.get(url, name="timeseries_polygon")
+        self.client.get(url, name="timeseries-polygon")

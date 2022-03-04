@@ -1,68 +1,80 @@
-import os
+import os.path
+import subprocess
 from typing import List
-import gevent
-from locust.env import Environment
-from locust import stats
-from locust.stats import stats_printer, stats_history, StatsCSVFileWriter, PERCENTILES_TO_REPORT
-from locust.log import setup_logging
-from datetime import datetime
+import locust.stats
+
+from benchmarks.utils.tools import get_stat_path
 from benchmarks.settings import Settings
 
-from benchmarks import rastless_locust
-from benchmarks import rasdaman_locust
-
-setup_logging("INFO", None)
-stats.CSV_STATS_FLUSH_INTERVAL_SEC = 5
+locust.stats.CONSOLE_STATS_INTERVAL_SEC = 5
+locust.stats.PERCENTILES_TO_REPORT = [0.25, 0.50, 0.75, 0.99]
 
 
-def start_locust_runner(user_classes: List, user_count: int, spawn_rate: float, stop_after_seconds: int, csv_path: str,
-                        csv_timestamp: bool = False):
-    env = Environment(user_classes=user_classes)
-    env.create_local_runner()
-    gevent.spawn(stats_printer(env.stats))
-    gevent.spawn(stats_history, env.runner)
+TEST_TYPE_SETTINGS = {
+    "visualization": {
+        "rasdaman-local": {
+            "file": "benchmarks/rasdaman_locust.py",
+            "class": "RasdamanLocalVisualization"
+        },
+        "rasdaman-proxy": {
+            "file": "benchmarks/rasdaman_locust.py",
+            "class": "RasdamanProxyVisualization"
+        },
+        "rastless": {
+            "file": "benchmarks/rastless_locust.py",
+            "class": "RastLessVisualization"
+        }
+    },
+    "point-analysis": {
+        "rasdaman-local": {
+            "file": "benchmarks/rasdaman_locust.py",
+            "class": "RasdamanLocalPointAnalysis"
+        },
+        "rasdaman-proxy": {
+            "file": "benchmarks/rasdaman_locust.py",
+            "class": "RasdamanProxyPointAnalysis"
+        },
+        "rastless": {
+            "file": "benchmarks/rastless_locust.py",
+            "class": "RastLessPointAnalysis"
+        }
+    },
+    "polygon-analysis": {
+        "rasdaman-local": {
+            "file": "benchmarks/rasdaman_locust.py",
+            "class": "RasdamanLocalPolygonAnalysis"
+        },
+        "rasdaman-proxy": {
+            "file": "benchmarks/rasdaman_locust.py",
+            "class": "RasdamanProxyPolygonAnalysis"
+        },
+        "rastless": {
+            "file": "benchmarks/rastless_locust.py",
+            "class": "RastLessPolygonAnalysis"
+        }
+    }
+}
 
-    if csv_timestamp:
-        csv_path = f"{csv_path}_{datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}"
 
-    csv_stats = StatsCSVFileWriter(env, PERCENTILES_TO_REPORT, csv_path)
-    gevent.spawn(csv_stats.stats_writer)
+def run_test(test_type, systems: List[str], user_count: int, spawn_rate: float, run_time: str, add_timestamp=False):
+    test_type_settings = TEST_TYPE_SETTINGS[test_type]
 
-    env.runner.start(user_count, spawn_rate=spawn_rate)
+    for system in systems:
+        system_settings = test_type_settings[system]
 
-    gevent.spawn_later(stop_after_seconds, lambda: env.runner.quit())
-    env.runner.greenlet.join()
+        stat_directory = get_stat_path(system, test_type, user_count, spawn_rate, run_time, add_timestamp)
+
+        command = ["locust", "-f", os.path.join(Settings.base_dir, system_settings['file']),
+                   system_settings['class'], "--headless", "--users", str(user_count),
+                   "--spawn-rate", str(spawn_rate), "--run-time", run_time,
+                   "--csv", stat_directory]
+
+        subprocess.call(command)
 
 
 if __name__ == '__main__':
-    USER_COUNT = 25
+    USER_COUNT = 20
     SPAWN_RATE = 1
-    STOP_AFTER_SECONDS = 35
+    RUN_TIME = "21s"
 
-    # start_locust_runner([rastless_locust.RastLessVisualization], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
-    #                     stop_after_seconds=STOP_AFTER_SECONDS,
-    #                     csv_path=os.path.join(Settings.base_dir, "benchmark_results/rastless/visualization"))
-    #
-    # start_locust_runner([rasdaman_locust.RasdamanProxyVisualization], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
-    #                     stop_after_seconds=STOP_AFTER_SECONDS,
-    #                     csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman/visualization"))
-    #
-    # start_locust_runner([rasdaman_locust.RasdamanLocalVisualization], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
-    #                     stop_after_seconds=STOP_AFTER_SECONDS,
-    #                     csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman_local/visualization"))
-    #
-    # start_locust_runner([rasdaman_locust.RasdamanProxyPointAnalysis], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
-    #                     stop_after_seconds=STOP_AFTER_SECONDS,
-    #                     csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman/analysis_point"))
-
-    # start_locust_runner([rasdaman_locust.RasdamanProxyPointAnalysis], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
-    #                     stop_after_seconds=STOP_AFTER_SECONDS,
-    #                     csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman/analysis_polygon"))
-
-    # start_locust_runner([rasdaman_locust.RasdamanLocalPointAnalysis], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
-    #                     stop_after_seconds=STOP_AFTER_SECONDS,
-    #                     csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman_local/analysis_point"))
-
-    start_locust_runner([rasdaman_locust.RasdamanLocalPolygonAnalysis], user_count=USER_COUNT, spawn_rate=SPAWN_RATE,
-                        stop_after_seconds=STOP_AFTER_SECONDS,
-                        csv_path=os.path.join(Settings.base_dir, "benchmark_results/rasdaman_local/analysis_polygon"))
+    run_test("polygon-analysis", ["rastless"], USER_COUNT, SPAWN_RATE, RUN_TIME)

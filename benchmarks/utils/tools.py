@@ -1,10 +1,14 @@
 import json
+import os.path
 from random import Random
 import mercantile
 from typing import List
 from shapely.geometry import shape, Point
+from pathlib import Path
+from datetime import datetime
 
 from benchmarks.utils.geo import BoundingBox, Tile, Point as GeomPoint
+from benchmarks.settings import Settings
 
 
 class RandomTileByBBox:
@@ -116,12 +120,17 @@ def geojson_file_to_dict(geojson_file_path) -> dict:
     return data["features"][0]["geometry"]
 
 
-if __name__ == '__main__':
-    geojson = geojson_file_to_dict("/home/marcel/PycharmProjects/rastless-benchmarks/data/banja_dam.geojson")
+def get_stat_path(system, test_type, user_count, spawn_rate, runtime, add_timestamp=False):
+    path = os.path.join(Settings.base_dir, f"benchmark_results/{system}/{test_type}/user_{user_count}_spawn-rate_{spawn_rate}_runtime_{runtime}")
 
-    random_points = RandomGeometryGeojson(geojson)
-    random_points.generate_points()
+    if test_type in ["point-analysis", "polygon-analysis"]:
+        path += f"_layers_{Settings.entries}"
 
-    test = random_points.get_polygon_rasdaman()
+    Path(path).mkdir(parents=True, exist_ok=True)
 
-    print("test")
+    file = "test"
+
+    if add_timestamp:
+        file += f"_{datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}"
+
+    return os.path.join(path, file)
