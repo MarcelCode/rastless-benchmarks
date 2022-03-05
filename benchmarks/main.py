@@ -7,7 +7,6 @@ from datetime import datetime
 from utils.tools import get_stat_path
 from settings import Settings
 
-
 TEST_TYPE_SETTINGS = {
     "visualization": {
         "rasdaman-local": {
@@ -54,7 +53,8 @@ TEST_TYPE_SETTINGS = {
 }
 
 
-def run_test(environment: str, test_type: str, systems: List[str], user_count: int, spawn_rate: float, run_time: str, add_timestamp=False):
+def run_test(environment: str, test_type: str, systems: List[str], user_count: int, spawn_rate: float, run_time: str,
+             add_timestamp=False):
     test_type_settings = TEST_TYPE_SETTINGS[test_type]
 
     timestamp = None
@@ -78,13 +78,13 @@ def run_test(environment: str, test_type: str, systems: List[str], user_count: i
 
 
 if __name__ == '__main__':
-    ENVIRONMENT = "ec2-t2-m"
+    ENVIRONMENT = os.getenv("ENVIRONMENT")
 
     run_test(ENVIRONMENT, "visualization", ["rasdaman-local", "rastless", "rasdaman-proxy"], 25, 1, "41s",
              add_timestamp=True)
 
     run_test(ENVIRONMENT, "point-analysis", ["rasdaman-local", "rastless", "rasdaman-proxy"], 10, 1, "31s",
              add_timestamp=True)
-	
+
     run_test(ENVIRONMENT, "polygon-analysis", ["rasdaman-local", "rastless", "rasdaman-proxy"], 10, 1, "31s",
              add_timestamp=True)
