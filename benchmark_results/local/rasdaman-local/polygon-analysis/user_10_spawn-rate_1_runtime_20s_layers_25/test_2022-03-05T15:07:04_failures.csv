@@ -1,0 +1,3 @@
+Method,Name,Error,Occurrences
+GET,timeseries-polygon,[Errno 104] Connection reset by peer,40
+GET,timeseries-polygon,Remote end closed connection without response,10

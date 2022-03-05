@@ -3,9 +3,9 @@ from urllib.parse import quote
 import os
 import locust.stats
 
-from benchmarks.settings import RasdamanSettings, RasdamanLocalSettings, Settings
-from benchmarks.utils.auth import get_keycloak_bearer_token
-from benchmarks.utils.tools import RandomDate, RandomTile, geojson_file_to_dict, RandomGeometryGeojson
+from settings import RasdamanSettings, RasdamanLocalSettings, Settings
+from utils.auth import get_keycloak_bearer_token
+from utils.tools import RandomDate, RandomTile, geojson_file_to_dict, RandomGeometryGeojson
 
 locust.stats.CSV_STATS_FLUSH_INTERVAL_SEC = 5
 locust.stats.PERCENTILES_TO_REPORT = [0.25, 0.50, 0.75, 0.99]

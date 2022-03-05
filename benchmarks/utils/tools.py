@@ -5,10 +5,8 @@ import mercantile
 from typing import List
 from shapely.geometry import shape, Point
 from pathlib import Path
-from datetime import datetime
 
-from benchmarks.utils.geo import BoundingBox, Tile, Point as GeomPoint
-from benchmarks.settings import Settings
+from .geo import BoundingBox, Tile, Point as GeomPoint
 
 
 class RandomTileByBBox:
@@ -120,11 +118,11 @@ def geojson_file_to_dict(geojson_file_path) -> dict:
     return data["features"][0]["geometry"]
 
 
-def get_stat_path(test_from, system, test_type, user_count, spawn_rate, runtime, timestamp=None):
-    path = os.path.join(Settings.base_dir, f"benchmark_results/{test_from}/{system}/{test_type}/user_{user_count}_spawn-rate_{spawn_rate}_runtime_{runtime}")
+def get_stat_path(base_dir, test_from, system, test_type, user_count, spawn_rate, runtime, entries=None, timestamp=None):
+    path = os.path.join(base_dir, f"benchmark_results/{test_from}/{system}/{test_type}/user_{user_count}_spawn-rate_{spawn_rate}_runtime_{runtime}")
 
     if test_type in ["point-analysis", "polygon-analysis"]:
-        path += f"_layers_{Settings.entries}"
+        path += f"_layers_{entries}"
 
     Path(path).mkdir(parents=True, exist_ok=True)
 

@@ -3,7 +3,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 
-from benchmarks.utils.geo import BoundingBox, Tile
+from utils.geo import BoundingBox, Tile
 
 load_dotenv()
 
