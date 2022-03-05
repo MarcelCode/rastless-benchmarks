@@ -1,8 +1,12 @@
 from locust import HttpUser, task
 import os
+import locust.stats
 
 from benchmarks.settings import Settings, RastLessSettings
 from benchmarks.utils.tools import RandomDate, RandomTile, geojson_file_to_dict, RandomGeometryGeojson
+
+locust.stats.CSV_STATS_FLUSH_INTERVAL_SEC = 5
+locust.stats.PERCENTILES_TO_REPORT = [0.25, 0.50, 0.75, 0.99]
 
 geojson = geojson_file_to_dict(os.path.join(Settings.base_dir, Settings.aoi_geojson_file))
 random_geometry_gen = RandomGeometryGeojson(geojson)

@@ -1,13 +1,11 @@
 import os.path
 import subprocess
+import time
 from typing import List
-import locust.stats
+from datetime import datetime
 
 from benchmarks.utils.tools import get_stat_path
 from benchmarks.settings import Settings
-
-locust.stats.CONSOLE_STATS_INTERVAL_SEC = 5
-locust.stats.PERCENTILES_TO_REPORT = [0.25, 0.50, 0.75, 0.99]
 
 
 TEST_TYPE_SETTINGS = {
@@ -56,13 +54,17 @@ TEST_TYPE_SETTINGS = {
 }
 
 
-def run_test(test_type, systems: List[str], user_count: int, spawn_rate: float, run_time: str, add_timestamp=False):
+def run_test(environment: str, test_type: str, systems: List[str], user_count: int, spawn_rate: float, run_time: str, add_timestamp=False):
     test_type_settings = TEST_TYPE_SETTINGS[test_type]
+
+    timestamp = None
+    if add_timestamp:
+        timestamp = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
 
     for system in systems:
         system_settings = test_type_settings[system]
-
-        stat_directory = get_stat_path(system, test_type, user_count, spawn_rate, run_time, add_timestamp)
+        print(system_settings)
+        stat_directory = get_stat_path(environment, system, test_type, user_count, spawn_rate, run_time, timestamp)
 
         command = ["locust", "-f", os.path.join(Settings.base_dir, system_settings['file']),
                    system_settings['class'], "--headless", "--users", str(user_count),
@@ -70,11 +72,15 @@ def run_test(test_type, systems: List[str], user_count: int, spawn_rate: float, 
                    "--csv", stat_directory]
 
         subprocess.call(command)
+        # print(" ".join(command))
+        time.sleep(2)
 
 
 if __name__ == '__main__':
-    USER_COUNT = 20
+    USER_COUNT = 25
     SPAWN_RATE = 1
-    RUN_TIME = "21s"
+    RUN_TIME = "31s"
+    ENVIRONMENT = "local"
 
-    run_test("polygon-analysis", ["rastless"], USER_COUNT, SPAWN_RATE, RUN_TIME)
+    run_test(ENVIRONMENT, "visualization", ["rasdaman-proxy", "rastless", "rasdaman-local"], USER_COUNT, SPAWN_RATE, RUN_TIME,
+             add_timestamp=True)

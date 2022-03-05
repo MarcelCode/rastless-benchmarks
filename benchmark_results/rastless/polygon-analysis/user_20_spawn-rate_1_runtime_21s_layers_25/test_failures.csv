@@ -1,2 +1,0 @@
-Method,Name,Error,Occurrences
-POST,timeseries-polygon,500 Server Error: Internal Server Error for url: timeseries-polygon,1

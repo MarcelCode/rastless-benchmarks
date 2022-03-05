@@ -120,8 +120,8 @@ def geojson_file_to_dict(geojson_file_path) -> dict:
     return data["features"][0]["geometry"]
 
 
-def get_stat_path(system, test_type, user_count, spawn_rate, runtime, add_timestamp=False):
-    path = os.path.join(Settings.base_dir, f"benchmark_results/{system}/{test_type}/user_{user_count}_spawn-rate_{spawn_rate}_runtime_{runtime}")
+def get_stat_path(test_from, system, test_type, user_count, spawn_rate, runtime, timestamp=None):
+    path = os.path.join(Settings.base_dir, f"benchmark_results/{test_from}/{system}/{test_type}/user_{user_count}_spawn-rate_{spawn_rate}_runtime_{runtime}")
 
     if test_type in ["point-analysis", "polygon-analysis"]:
         path += f"_layers_{Settings.entries}"
@@ -130,7 +130,7 @@ def get_stat_path(system, test_type, user_count, spawn_rate, runtime, add_timest
 
     file = "test"
 
-    if add_timestamp:
-        file += f"_{datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}"
+    if timestamp:
+        file += f"_{timestamp}"
 
     return os.path.join(path, file)

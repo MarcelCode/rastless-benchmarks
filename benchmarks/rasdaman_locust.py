@@ -1,10 +1,14 @@
-from locust import FastHttpUser, task
+from locust import HttpUser, task
 from urllib.parse import quote
 import os
+import locust.stats
 
 from benchmarks.settings import RasdamanSettings, RasdamanLocalSettings, Settings
 from benchmarks.utils.auth import get_keycloak_bearer_token
 from benchmarks.utils.tools import RandomDate, RandomTile, geojson_file_to_dict, RandomGeometryGeojson
+
+locust.stats.CSV_STATS_FLUSH_INTERVAL_SEC = 5
+locust.stats.PERCENTILES_TO_REPORT = [0.25, 0.50, 0.75, 0.99]
 
 BEARER_TOKEN = get_keycloak_bearer_token(RasdamanSettings)
 
@@ -13,7 +17,7 @@ random_geometry_gen = RandomGeometryGeojson(geojson)
 random_geometry_gen.generate_points()
 
 
-class Rasdaman(FastHttpUser):
+class Rasdaman(HttpUser):
     random_tile = RandomTile(Settings.tiles)
     random_dates = RandomDate(Settings.dates)
 
@@ -52,7 +56,7 @@ class RasdamanLocalVisualization(Rasdaman):
     name = "visualization"
 
 
-class RasdamanProxyPointAnalysis(FastHttpUser):
+class RasdamanProxyPointAnalysis(HttpUser):
     layer_id = RasdamanSettings.layer_id
     host = RasdamanSettings.host
     random_geometry = random_geometry_gen
@@ -66,7 +70,7 @@ class RasdamanProxyPointAnalysis(FastHttpUser):
                         name="timeseries-point")
 
 
-class RasdamanProxyPolygonAnalysis(FastHttpUser):
+class RasdamanProxyPolygonAnalysis(HttpUser):
     layer_id = RasdamanSettings.layer_id
     host = RasdamanSettings.host
     random_geometry = random_geometry_gen
@@ -85,7 +89,7 @@ class RasdamanProxyPolygonAnalysis(FastHttpUser):
                          name="timeseries-polygon")
 
 
-class RasdamanLocalPointAnalysis(FastHttpUser):
+class RasdamanLocalPointAnalysis(HttpUser):
     layer_id = RasdamanLocalSettings.layer_id
     host = RasdamanLocalSettings.host
     random_geometry = random_geometry_gen
@@ -104,7 +108,7 @@ class RasdamanLocalPointAnalysis(FastHttpUser):
         self.client.get(url, name="timeseries-point")
 
 
-class RasdamanLocalPolygonAnalysis(FastHttpUser):
+class RasdamanLocalPolygonAnalysis(HttpUser):
     layer_id = RasdamanLocalSettings.layer_id
     host = RasdamanLocalSettings.host
     random_geometry = random_geometry_gen
