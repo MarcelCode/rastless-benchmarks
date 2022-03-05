@@ -5,4 +5,4 @@ notes.md
 tryout.py
 
 *.pyc
-.pytest_cache
+*.pytest_cache
