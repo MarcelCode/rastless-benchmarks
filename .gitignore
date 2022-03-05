@@ -4,5 +4,5 @@
 notes.md
 tryout.py
 
-__pychache__
+*.pyc
 .pytest_cache
