@@ -3,3 +3,6 @@
 .env
 notes.md
 tryout.py
+
+__pychache__
+.pytest_cache
