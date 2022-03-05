@@ -48,7 +48,7 @@ def read_stat_history_date(environment, test_type, user, spawn_rate, runtime, is
     return dfs
 
 
-def read_stat_history_dates_combined(environment, test_type, user, spawn_rate, runtime, stat_func="median"):
+def read_stat_history_dates_combined(environment, test_type, user, spawn_rate, runtime, combine_method="median"):
     dfs = dict()
 
     for system in ["rastless", "rasdaman-proxy", "rasdaman-local"]:
@@ -56,19 +56,17 @@ def read_stat_history_dates_combined(environment, test_type, user, spawn_rate, r
                                    f"benchmark_results/{environment}/{system}/{test_type}/user_{user}_spawn-rate_{spawn_rate}_runtime_{runtime}")
         file_paths = [os.path.join(folder_path, x) for x in os.listdir(folder_path) if x.endswith("stats_history.csv")]
         date_dfs = [read_result(path) for path in file_paths]
-        dfs[system] = stat_aggregate_dfs(date_dfs, stat_func)
+        dfs[system] = stat_aggregate_dfs(date_dfs, combine_method)
 
     return dfs
 
 
-if __name__ == '__main__':
-    USER = 25
-    SPAWN_RATE = 1
-    RUNTIME = "31s"
-    DATE = "2022-03-05T12:44:39"
-    TEST_TYPE = "visualization"
-    ENVIRONMENT = "local"
+def create_pdf_filename(folder, filename, metadata):
+    info = "_".join([str(x) for x in metadata.values()])
+    return os.path.join(folder, f"{filename}_{info}.pdf")
 
-    system_dfs = read_stat_history_date(ENVIRONMENT, TEST_TYPE, USER, SPAWN_RATE, RUNTIME, DATE)
-    system_dfs_combined = read_stat_history_dates_combined(ENVIRONMENT, TEST_TYPE, USER, SPAWN_RATE, RUNTIME, "median")
-    print("test")
+
+if __name__ == '__main__':
+    test_setup = {"user": 25, "spawn_rate": 1, "runtime": "31s", "test_type": "visualization", "environment": "local",
+                  "combine_method": "median"}
+    print(create_pdf_filename("./result_images", "user_count", test_setup))

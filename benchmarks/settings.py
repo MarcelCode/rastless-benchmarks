@@ -160,4 +160,4 @@ class RasdamanSettings:
 
 @dataclass
 class RasdamanLocalSettings(RasdamanSettings):
-    host = "http://127.0.0.1:5255"
+    host = os.getenv("RASDAMAN_LOCAL_HOST")
