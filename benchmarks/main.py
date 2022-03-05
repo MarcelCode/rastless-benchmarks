@@ -78,12 +78,13 @@ def run_test(environment: str, test_type: str, systems: List[str], user_count: i
 
 
 if __name__ == '__main__':
-    USER_COUNT = 25
-    SPAWN_RATE = 1
-    RUN_TIME = "31s"
-    ENVIRONMENT = "local"
+    ENVIRONMENT = "ec2-t2-m"
 
-    run_test(ENVIRONMENT, "visualization", ["rasdaman-proxy"], USER_COUNT, SPAWN_RATE, RUN_TIME,
+    run_test(ENVIRONMENT, "visualization", ["rasdaman-local", "rastless", "rasdaman-proxy"], 25, 1, "41s",
              add_timestamp=True)
 
-    # , "rastless", "rasdaman-local"
+    run_test(ENVIRONMENT, "point-analysis", ["rasdaman-local", "rastless", "rasdaman-proxy"], 10, 1, "31s",
+             add_timestamp=True)
+	
+    run_test(ENVIRONMENT, "polygon-analysis", ["rasdaman-local", "rastless", "rasdaman-proxy"], 10, 1, "31s",
+             add_timestamp=True)
