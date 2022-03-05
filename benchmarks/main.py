@@ -79,8 +79,8 @@ def run_test(environment: str, test_type: str, systems: List[str], user_count: i
 if __name__ == '__main__':
     USER_COUNT = 25
     SPAWN_RATE = 1
-    RUN_TIME = "31s"
-    ENVIRONMENT = "local"
+    RUN_TIME = "41s"
+    ENVIRONMENT = "ec2-t2-m"
 
     run_test(ENVIRONMENT, "visualization", ["rasdaman-proxy", "rastless", "rasdaman-local"], USER_COUNT, SPAWN_RATE, RUN_TIME,
              add_timestamp=True)
