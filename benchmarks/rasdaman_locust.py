@@ -1,4 +1,4 @@
-from locust import HttpUser, task
+from locust import HttpUser, task, constant_throughput
 from urllib.parse import quote
 import os
 import locust.stats
@@ -20,6 +20,7 @@ random_geometry_gen.generate_points()
 class Rasdaman(HttpUser):
     random_tile = RandomTile(Settings.tiles)
     random_dates = RandomDate(Settings.dates)
+    wait_time = constant_throughput(20)
 
     host = ""
     layer_id = ""

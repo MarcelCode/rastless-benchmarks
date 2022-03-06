@@ -1,4 +1,4 @@
-from locust import HttpUser, task
+from locust import HttpUser, task, constant_throughput
 import os
 import locust.stats
 
@@ -14,6 +14,7 @@ random_geometry_gen.generate_points()
 
 
 class RastLess(HttpUser):
+    wait_time = constant_throughput(20)
     host = RastLessSettings.host
     layer_id = RastLessSettings.layer_id
     access_token = RastLessSettings.access_token
