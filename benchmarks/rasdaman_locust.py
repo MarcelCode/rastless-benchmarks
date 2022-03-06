@@ -20,7 +20,7 @@ random_geometry_gen.generate_points()
 class Rasdaman(HttpUser):
     random_tile = RandomTile(Settings.tiles)
     random_dates = RandomDate(Settings.dates)
-    wait_time = constant_throughput(20)
+    wait_time = constant_throughput(50)
 
     host = ""
     layer_id = ""

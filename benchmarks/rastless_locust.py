@@ -14,7 +14,7 @@ random_geometry_gen.generate_points()
 
 
 class RastLess(HttpUser):
-    wait_time = constant_throughput(20)
+    wait_time = constant_throughput(50)
     host = RastLessSettings.host
     layer_id = RastLessSettings.layer_id
     access_token = RastLessSettings.access_token

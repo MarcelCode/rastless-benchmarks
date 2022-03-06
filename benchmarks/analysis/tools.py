@@ -49,8 +49,8 @@ def read_stat_history_date(environment, test_type, user, spawn_rate, runtime, is
             filename = f"test_{iso_date}_stats_history.csv"
 
             dfs[system] = read_result(os.path.join(folder_path, filename))
-        except:
-            continue
+        except Exception as e:
+            print(e)
 
     return dfs
 
@@ -69,8 +69,8 @@ def read_stat_history_dates_combined(environment, test_type, user, spawn_rate, r
             file_paths = [os.path.join(folder_path, x) for x in os.listdir(folder_path) if x.endswith("stats_history.csv")]
             date_dfs = [read_result(path) for path in file_paths]
             dfs[system] = stat_aggregate_dfs(date_dfs, combine_method)
-        except:
-            continue
+        except Exception as e:
+            print(e)
 
     return dfs
 
@@ -81,6 +81,6 @@ def create_pdf_filename(folder, filename, metadata):
 
 
 if __name__ == '__main__':
-    test_setup = {"user": 25, "spawn_rate": 1, "runtime": "31s", "test_type": "visualization", "environment": "local",
-                  "combine_method": "median"}
-    print(create_pdf_filename("./result_images", "user_count", test_setup))
+    test_setup = {"user": 20, "spawn_rate": 20, "runtime": "31s", "test_type": "visualization", "environment": "ec2-t2-m", "iso_date": "2022-03-06T22:02:14"}
+
+    system_dfs_combined = read_stat_history_date(**test_setup)
