@@ -6,7 +6,7 @@ if __name__ == '__main__':
 
     user_count = 20
     spawn_rate = 20
-    runtime = "31s"
+    runtime = "61s"
 
-    run_test(ENVIRONMENT, "visualization", ["rasdaman-local", "rastless", "rasdaman-proxy"], user_count, spawn_rate,
+    run_test(ENVIRONMENT, "visualization", ["rasdaman-local", "rasdaman-proxy"], user_count, spawn_rate,
              runtime, add_timestamp=True)
