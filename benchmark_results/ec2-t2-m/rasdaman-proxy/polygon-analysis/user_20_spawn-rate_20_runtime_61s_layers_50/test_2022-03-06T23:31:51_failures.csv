@@ -1,0 +1,2 @@
+Method,Name,Error,Occurrences
+POST,timeseries-polygon,502 Server Error: Bad Gateway for url: timeseries-polygon,1
