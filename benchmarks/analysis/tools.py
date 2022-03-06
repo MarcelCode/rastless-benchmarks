@@ -18,7 +18,6 @@ def read_result(path: str, columns: List = None) -> pd.DataFrame:
 
 def combine_result(system_dfs: dict,
                    column: str) -> pd.DataFrame:
-
     system_series = []
     for name, df in system_dfs.items():
         series = df[column]
@@ -40,31 +39,38 @@ def read_stat_history_date(environment, test_type, user, spawn_rate, runtime, is
     dfs = dict()
 
     for system in ["rastless", "rasdaman-proxy", "rasdaman-local"]:
-        folder_path = os.path.join(Settings.base_dir,
-                                 f"benchmark_results/{environment}/{system}/{test_type}/user_{user}_spawn-rate_{spawn_rate}_runtime_{runtime}")
+        try:
+            folder_path = os.path.join(Settings.base_dir,
+                                       f"benchmark_results/{environment}/{system}/{test_type}/user_{user}_spawn-rate_{spawn_rate}_runtime_{runtime}")
 
-        if layers:
-            folder_path += f"_layers_{layers}"
+            if layers:
+                folder_path += f"_layers_{layers}"
 
-        filename = f"test_{iso_date}_stats_history.csv"
+            filename = f"test_{iso_date}_stats_history.csv"
 
-        dfs[system] = read_result(os.path.join(folder_path, filename))
+            dfs[system] = read_result(os.path.join(folder_path, filename))
+        except:
+            continue
 
     return dfs
 
 
-def read_stat_history_dates_combined(environment, test_type, user, spawn_rate, runtime, combine_method="median", layers=None):
+def read_stat_history_dates_combined(environment, test_type, user, spawn_rate, runtime, combine_method="median",
+                                     layers=None):
     dfs = dict()
 
     for system in ["rastless", "rasdaman-proxy", "rasdaman-local"]:
-        folder_path = os.path.join(Settings.base_dir,
-                                   f"benchmark_results/{environment}/{system}/{test_type}/user_{user}_spawn-rate_{spawn_rate}_runtime_{runtime}")
-        if layers:
-            folder_path += f"_layers_{layers}"
+        try:
+            folder_path = os.path.join(Settings.base_dir,
+                                       f"benchmark_results/{environment}/{system}/{test_type}/user_{user}_spawn-rate_{spawn_rate}_runtime_{runtime}")
+            if layers:
+                folder_path += f"_layers_{layers}"
 
-        file_paths = [os.path.join(folder_path, x) for x in os.listdir(folder_path) if x.endswith("stats_history.csv")]
-        date_dfs = [read_result(path) for path in file_paths]
-        dfs[system] = stat_aggregate_dfs(date_dfs, combine_method)
+            file_paths = [os.path.join(folder_path, x) for x in os.listdir(folder_path) if x.endswith("stats_history.csv")]
+            date_dfs = [read_result(path) for path in file_paths]
+            dfs[system] = stat_aggregate_dfs(date_dfs, combine_method)
+        except:
+            continue
 
     return dfs
 
