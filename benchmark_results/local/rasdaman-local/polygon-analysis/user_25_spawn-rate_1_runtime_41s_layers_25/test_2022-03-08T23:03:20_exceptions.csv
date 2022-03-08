@@ -1,0 +1,16 @@
+Count,Message,Traceback,Nodes
+880,request() got an unexpected keyword argument 'fetch_response',"  File ""/home/marcel/PycharmProjects/rastless-benchmarks/.venv/lib/python3.9/site-packages/locust/user/task.py"", line 309, in run
+    self.execute_next_task()
+  File ""/home/marcel/PycharmProjects/rastless-benchmarks/.venv/lib/python3.9/site-packages/locust/user/task.py"", line 334, in execute_next_task
+    self.execute_task(self._task_queue.pop(0))
+  File ""/home/marcel/PycharmProjects/rastless-benchmarks/.venv/lib/python3.9/site-packages/locust/user/task.py"", line 447, in execute_task
+    task(self.user)
+  File ""/home/marcel/PycharmProjects/rastless-benchmarks/benchmarks/rasdaman_locust.py"", line 137, in get_timeseries
+    with self.client.get(url, name=""timeseries-polygon"", fetch_response=True) as response:
+  File ""/home/marcel/PycharmProjects/rastless-benchmarks/.venv/lib/python3.9/site-packages/requests/sessions.py"", line 542, in get
+    return self.request('GET', url, **kwargs)
+  File ""/home/marcel/PycharmProjects/rastless-benchmarks/.venv/lib/python3.9/site-packages/locust/clients.py"", line 129, in request
+    response = self._send_request_safe_mode(method, url, **kwargs)
+  File ""/home/marcel/PycharmProjects/rastless-benchmarks/.venv/lib/python3.9/site-packages/locust/clients.py"", line 197, in _send_request_safe_mode
+    return super().request(method, url, **kwargs)
+",local

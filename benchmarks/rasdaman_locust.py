@@ -69,7 +69,7 @@ class RasdamanProxyPointAnalysis(HttpUser):
         geometry = self.random_geometry.get_point()
         url = f"/raster/hypos/wcps/point/{geometry.x}/{geometry.y}/?layers={self.layer_id}"
         with self.client.get(url, headers={"Authorization": self.bearer_token},
-                             name="timeseries-point", catch_result=True) as response:
+                             name="timeseries-point", catch_response=True) as response:
             if response.headers.get("content-type") == "application/json" and len(response.content) > 10:
                 response.success()
 
@@ -90,7 +90,7 @@ class RasdamanProxyPolygonAnalysis(HttpUser):
 
         url = f"/raster/hypos/wcps/polygon/?layers={self.layer_id}"
         with self.client.post(url, headers={"Authorization": self.bearer_token}, json=body,
-                              name="timeseries-polygon", fetch_response=True) as response:
+                              name="timeseries-polygon", catch_response=True) as response:
             if response.headers.get("content-type") == "application/json" and len(response.content) > 10:
                 response.success()
 
@@ -111,7 +111,7 @@ class RasdamanLocalPointAnalysis(HttpUser):
                 f' X({point_web_mercator.x}), Y({point_web_mercator.y})],"json")'
         url = f'/rasdaman/ows?VERSION=2.0.1&SERVICE=WCPS&QUERY={quote(query)}'
 
-        with self.client.get(url, name="timeseries-point", fetch_response=True) as response:
+        with self.client.get(url, name="timeseries-point", catch_response=True) as response:
             if response.headers.get("content-type") == "application/json" and len(response.content) > 10:
                 response.success()
 
@@ -134,7 +134,7 @@ class RasdamanLocalPolygonAnalysis(HttpUser):
 
         url = f'/rasdaman/ows?VERSION=2.0.1&SERVICE=WCPS&QUERY={quote(query)}'
 
-        with self.client.get(url, name="timeseries-polygon", fetch_response=True) as response:
+        with self.client.get(url, name="timeseries-polygon", catch_response=True) as response:
             if response.headers.get("content-type") == "application/json" and len(response.content) > 10:
                 response.success()
 

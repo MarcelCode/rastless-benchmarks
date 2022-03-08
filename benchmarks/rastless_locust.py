@@ -53,7 +53,7 @@ class RastLessAnalysis(RastLess):
 
         url = f"/layers/{self.layer_id}/statistic?token={self.access_token}&temporal_resolution=daily" \
               f"&start_date={self.start_date}&end_date={self.end_date}"
-        with self.client.post(url, json=body, name=self.name, fetch_response=True) as response:
+        with self.client.post(url, json=body, name=self.name, catch_response=True) as response:
             if response.headers.get("content-type") == "application/json" and len(response.content) > 10:
                 response.success()
 
