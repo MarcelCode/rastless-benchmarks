@@ -1,4 +1,4 @@
-from locust import HttpUser, task, constant_throughput
+from locust import HttpUser, task, run_single_user
 from urllib.parse import quote
 import os
 import locust.stats
@@ -20,7 +20,6 @@ random_geometry_gen.generate_points()
 class Rasdaman(HttpUser):
     random_tile = RandomTile(Settings.tiles)
     random_dates = RandomDate(Settings.dates)
-    wait_time = constant_throughput(50)
 
     host = ""
     layer_id = ""
@@ -35,7 +34,9 @@ class Rasdaman(HttpUser):
 
         request_url = self.url.format(layer_id=self.layer_id, datetime=datetime, bbox=tile.str_xy_bounds)
 
-        self.client.get(request_url, headers=self.headers, name=self.name)
+        with self.client.get(request_url, headers=self.headers, name=self.name, catch_response=True) as response:
+            if response.headers.get("content-type") == "image/png":
+                response.success()
 
 
 class RasdamanProxyVisualization(Rasdaman):
@@ -128,3 +129,7 @@ class RasdamanLocalPolygonAnalysis(HttpUser):
         url = f'/rasdaman/ows?VERSION=2.0.1&SERVICE=WCPS&QUERY={quote(query)}'
 
         self.client.get(url, name="timeseries-polygon")
+
+
+if __name__ == '__main__':
+    run_single_user(RasdamanLocalVisualization)

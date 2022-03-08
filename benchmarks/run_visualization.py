@@ -5,8 +5,8 @@ if __name__ == '__main__':
     ENVIRONMENT = os.getenv("ENVIRONMENT")
 
     user_count = 20
-    spawn_rate = 20
-    runtime = "61s"
+    spawn_rate = 1
+    runtime = "41s"
 
-    run_test(ENVIRONMENT, "visualization", ["rasdaman-local", "rasdaman-proxy"], user_count, spawn_rate,
+    run_test(ENVIRONMENT, "visualization", ["rasdaman-local"], user_count, spawn_rate,
              runtime, add_timestamp=True)

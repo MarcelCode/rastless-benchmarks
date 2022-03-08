@@ -1,4 +1,4 @@
-from locust import HttpUser, task, constant_throughput
+from locust import HttpUser, task
 import os
 import locust.stats
 
@@ -14,7 +14,6 @@ random_geometry_gen.generate_points()
 
 
 class RastLess(HttpUser):
-    wait_time = constant_throughput(50)
     host = RastLessSettings.host
     layer_id = RastLessSettings.layer_id
     access_token = RastLessSettings.access_token
@@ -30,7 +29,9 @@ class RastLessVisualization(RastLess):
         datetime = self.random_dates.get_date()
         datetime = datetime.replace("T", " ")  # This dataset is not stored as isodate
         url = f"/layers/{self.layer_id}/{datetime}/tile/{tile.z}/{tile.x}/{tile.y}.png?token={self.access_token}"
-        self.client.get(url, name="visualization")
+        with self.client.get(url, name="visualization", catch_response=True) as response:
+            if response.headers.get("content-type") == "image/png":
+                response.success()
 
 
 class RastLessAnalysis(RastLess):
