@@ -30,7 +30,7 @@ class RastLessVisualization(RastLess):
         datetime = datetime.replace("T", " ")  # This dataset is not stored as isodate
         url = f"/layers/{self.layer_id}/{datetime}/tile/{tile.z}/{tile.x}/{tile.y}.png?token={self.access_token}"
         with self.client.get(url, name="visualization", catch_response=True) as response:
-            if response.headers.get("content-type") == "image/png":
+            if response.headers.get("content-type") == "image/png" and len(response.content) > 10:
                 response.success()
 
 
@@ -53,7 +53,9 @@ class RastLessAnalysis(RastLess):
 
         url = f"/layers/{self.layer_id}/statistic?token={self.access_token}&temporal_resolution=daily" \
               f"&start_date={self.start_date}&end_date={self.end_date}"
-        self.client.post(url, json=body, name=self.name)
+        with self.client.post(url, json=body, name=self.name, fetch_response=True) as response:
+            if response.headers.get("content-type") == "application/json" and len(response.content) > 10:
+                response.success()
 
 
 class RastLessPointAnalysis(RastLessAnalysis):

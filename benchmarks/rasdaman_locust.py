@@ -35,7 +35,7 @@ class Rasdaman(HttpUser):
         request_url = self.url.format(layer_id=self.layer_id, datetime=datetime, bbox=tile.str_xy_bounds)
 
         with self.client.get(request_url, headers=self.headers, name=self.name, catch_response=True) as response:
-            if response.headers.get("content-type") == "image/png":
+            if response.headers.get("content-type") == "image/png" and len(response.content) > 10:
                 response.success()
 
 
@@ -68,8 +68,10 @@ class RasdamanProxyPointAnalysis(HttpUser):
     def get_timeseries(self):
         geometry = self.random_geometry.get_point()
         url = f"/raster/hypos/wcps/point/{geometry.x}/{geometry.y}/?layers={self.layer_id}"
-        self.client.get(url, headers={"Authorization": self.bearer_token},
-                        name="timeseries-point")
+        with self.client.get(url, headers={"Authorization": self.bearer_token},
+                             name="timeseries-point", catch_result=True) as response:
+            if response.headers.get("content-type") == "application/json" and len(response.content) > 10:
+                response.success()
 
 
 class RasdamanProxyPolygonAnalysis(HttpUser):
@@ -87,8 +89,10 @@ class RasdamanProxyPolygonAnalysis(HttpUser):
         }
 
         url = f"/raster/hypos/wcps/polygon/?layers={self.layer_id}"
-        self.client.post(url, headers={"Authorization": self.bearer_token}, json=body,
-                         name="timeseries-polygon")
+        with self.client.post(url, headers={"Authorization": self.bearer_token}, json=body,
+                              name="timeseries-polygon", fetch_response=True) as response:
+            if response.headers.get("content-type") == "application/json" and len(response.content) > 10:
+                response.success()
 
 
 class RasdamanLocalPointAnalysis(HttpUser):
@@ -107,7 +111,9 @@ class RasdamanLocalPointAnalysis(HttpUser):
                 f' X({point_web_mercator.x}), Y({point_web_mercator.y})],"json")'
         url = f'/rasdaman/ows?VERSION=2.0.1&SERVICE=WCPS&QUERY={quote(query)}'
 
-        self.client.get(url, name="timeseries-point")
+        with self.client.get(url, name="timeseries-point", fetch_response=True) as response:
+            if response.headers.get("content-type") == "application/json" and len(response.content) > 10:
+                response.success()
 
 
 class RasdamanLocalPolygonAnalysis(HttpUser):
@@ -128,8 +134,10 @@ class RasdamanLocalPolygonAnalysis(HttpUser):
 
         url = f'/rasdaman/ows?VERSION=2.0.1&SERVICE=WCPS&QUERY={quote(query)}'
 
-        self.client.get(url, name="timeseries-polygon")
+        with self.client.get(url, name="timeseries-polygon", fetch_response=True) as response:
+            if response.headers.get("content-type") == "application/json" and len(response.content) > 10:
+                response.success()
 
 
 if __name__ == '__main__':
-    run_single_user(RasdamanLocalVisualization)
+    run_single_user(RasdamanLocalPolygonAnalysis)
