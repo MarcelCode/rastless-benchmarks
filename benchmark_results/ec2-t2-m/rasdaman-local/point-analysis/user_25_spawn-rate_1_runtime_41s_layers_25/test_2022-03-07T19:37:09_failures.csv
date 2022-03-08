@@ -1,0 +1,2 @@
+Method,Name,Error,Occurrences
+GET,timeseries-point,500 Server Error:  for url: timeseries-point,6

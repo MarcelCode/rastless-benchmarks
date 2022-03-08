@@ -131,7 +131,7 @@ class Settings:
     max_zoom: int = 15
     aoi_geojson_file = "data/banja_dam.geojson"
     start_date = '2019-03-18T09:39:09'
-    entries = 50
+    entries = 25
 
     @property
     def end_date(self):
