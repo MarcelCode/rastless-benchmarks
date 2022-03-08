@@ -1,6 +1,6 @@
 import json
 import os.path
-from random import Random
+import random
 import mercantile
 from typing import List
 from shapely.geometry import shape, Point
@@ -11,7 +11,7 @@ from .geo import BoundingBox, Tile, Point as GeomPoint
 
 class RandomTileByBBox:
     def __init__(self, bbox: BoundingBox, min_zoom: int, max_zoom: int):
-        self.random = Random(42)
+        self.random = random    # Random(42)
         self.min_zoom = min_zoom
         self.max_zoom = max_zoom
 
@@ -20,18 +20,20 @@ class RandomTileByBBox:
         else:
             self.bbox = bbox
 
-    def get_tile(self) -> mercantile.Tile:
+    def get_tile(self) -> Tile:
         random_zoom = self.random.randint(self.min_zoom, self.max_zoom)
 
         random_x_coord = self.random.uniform(self.bbox.x_east, self.bbox.x_west)
         random_y_coord = self.random.uniform(self.bbox.y_north, self.bbox.y_south)
 
-        return mercantile.tile(random_x_coord, random_y_coord, random_zoom)
+        mercantile_tile = mercantile.tile(random_x_coord, random_y_coord, random_zoom)
+
+        return Tile(x=mercantile_tile.x, y=mercantile_tile.y, z=mercantile_tile.z)
 
 
 class RandomTile:
     def __init__(self, tiles: List[Tile]):
-        self.random = Random(42)
+        self.random = random    # Random(42)
         self.tiles = tiles
 
     def get_tile(self) -> Tile:
@@ -41,7 +43,7 @@ class RandomTile:
 
 class RandomDate:
     def __init__(self, dates: List[str]):
-        self.random = Random(42)
+        self.random = random    # Random(42)
         self.dates = dates
 
     def get_date(self):
@@ -51,12 +53,11 @@ class RandomDate:
 
 class RandomGeometryGeojson:
     def __init__(self, polygon_geojson: dict):
-        self.random = Random(42)
+        self.random = random    # Random(42)
         self.polygon = shape(polygon_geojson)
         self.points = []
 
     def generate_points(self, number: int = 1000):
-        random = Random(42)
         minx, miny, maxx, maxy = self.polygon.bounds
 
         while len(self.points) < number:

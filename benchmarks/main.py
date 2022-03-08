@@ -75,16 +75,3 @@ def run_test(environment: str, test_type: str, systems: List[str], user_count: i
         subprocess.call(command)
         # print(" ".join(command))
         time.sleep(2)
-
-
-if __name__ == '__main__':
-    ENVIRONMENT = os.getenv("ENVIRONMENT")
-
-    #run_test(ENVIRONMENT, "visualization", ["rasdaman-local", "rastless", "rasdaman-proxy"], 25, 1, "41s",
-    #         add_timestamp=True)
-
-    #run_test(ENVIRONMENT, "point-analysis", ["rasdaman-local", "rastless", "rasdaman-proxy"], 10, 1, "31s",
-    #         add_timestamp=True)
-
-    run_test(ENVIRONMENT, "polygon-analysis", ["rasdaman-local", "rastless", "rasdaman-proxy"], 10, 1, "31s",
-             add_timestamp=True)
