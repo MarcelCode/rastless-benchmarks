@@ -66,7 +66,8 @@ def read_stat_history_dates_combined(environment, test_type, user, spawn_rate, r
             if layers:
                 folder_path += f"_layers_{layers}"
 
-            file_paths = [os.path.join(folder_path, x) for x in os.listdir(folder_path) if x.endswith("stats_history.csv")]
+            file_paths = [os.path.join(folder_path, x) for x in os.listdir(folder_path) if
+                          x.endswith("stats_history.csv")]
             date_dfs = [read_result(path) for path in file_paths]
             dfs[system] = stat_aggregate_dfs(date_dfs, combine_method)
         except Exception as e:
@@ -80,7 +81,15 @@ def create_pdf_filename(folder, filename, metadata):
     return os.path.join(folder, f"{filename}_{info}.pdf")
 
 
-if __name__ == '__main__':
-    test_setup = {"user": 20, "spawn_rate": 20, "runtime": "31s", "test_type": "visualization", "environment": "ec2-t2-m", "iso_date": "2022-03-06T22:02:14"}
+def rename_columns(df, setup, setup_element):
+    value = setup[setup_element]
+    renaming = {column: f"{column} - {setup_element}: {value}" for column in df.columns}
+    return df.rename(columns=renaming)
 
-    system_dfs_combined = read_stat_history_date(**test_setup)
+
+if __name__ == '__main__':
+    setup = {"layers": 25}
+    df = pd.DataFrame([[1, 2, 3]], columns=["neu", "blub", "test"])
+
+    df = rename_columns(df, setup, "layers")
+    print(df)
