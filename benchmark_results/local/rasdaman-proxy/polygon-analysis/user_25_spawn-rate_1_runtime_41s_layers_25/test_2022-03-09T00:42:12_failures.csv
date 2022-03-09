@@ -1,0 +1,2 @@
+Method,Name,Error,Occurrences
+POST,timeseries-polygon,500 Server Error: Internal Server Error for url: https://api-layer.eomap.com/raster/hypos/wcps/polygon/?layers=TUR_alb_banja_hypos_public_32bit,1
